@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operative & Restorative Dentistry — Case Index</title>
+<style>
+  @import url(\'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Parisienne&display=swap\');
+
+  :root{
+    --porcelain:#F6F3ED;
+    --ink:#211F1B;
+    --ink-soft:#6B665D;
+    --teal:#1F5B57;
+    --teal-tint:#E4ECEA;
+    --coral:#C1665B;
+    --coral-tint:#F3E4E1;
+    --gold:#A9823C;
+    --gold-tint:#EFE7D4;
+    --sage:#E7EBE1;
+    --line:#DAD5C9;
+    --paper:#FBFAF6;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--porcelain);
+    color:var(--ink);
+    font-family:\'IBM Plex Sans\',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 24px;
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:rgba(246,243,237,0.92);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .nav-name{
+    font-family:\'Parisienne\',cursive;
+    font-size:26px;
+    color:var(--ink);
+    line-height:1;
+  }
+  .nav-back{
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:12px;font-weight:600;
+    color:var(--ink);
+    text-decoration:none;
+    border:1px solid var(--ink);
+    padding:7px 14px;
+    display:inline-block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:40px 24px 40px;
+    position:relative;
+  }
+  .hero-kicker{
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:12px;color:var(--teal);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:\'Fraunces\',serif;
+    font-weight:500;
+    font-size:34px;
+    line-height:1.18;
+    margin:0 0 16px;
+    max-width:15ch;
+  }
+  .hero p{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    max-width:34ch;
+    margin:0 0 30px;
+  }
+
+  /* ---------- PHOTO GALLERY (tap-through, any number of photos) ---------- */
+  .gallery-wrap{
+    border:1px solid var(--line);
+    background:var(--paper);
+    padding:10px 10px 14px;
+  }
+  .gallery{
+    position:relative;
+    width:100%;
+    height:0;
+    padding-top:75%;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:
+      repeating-linear-gradient(135deg, rgba(0,0,0,0.03) 0 2px, transparent 2px 6px),
+      linear-gradient(160deg,#E7EBE1,#DAD5C9);
+  }
+  .g-slide{
+    position:absolute;inset:0;
+    opacity:0;
+    transition:opacity .25s ease;
+    display:flex;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .g-slide.active{opacity:1;pointer-events:auto;}
+  .g-slide img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+    position:absolute;inset:0;
+  }
+  .g-slide svg{width:30%;max-width:100px;opacity:0.35;position:relative;}
+  .slide-label{
+    position:absolute;bottom:10px;left:10px;
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:11px;color:var(--ink-soft);
+    letter-spacing:0.02em;
+    background:rgba(251,250,246,0.85);
+    padding:2px 8px;
+    z-index:2;
+  }
+  .g-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:32px;height:32px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;line-height:1;padding:0;
+    cursor:pointer;z-index:3;
+  }
+  .g-prev{left:8px;}
+  .g-next{right:8px;}
+  .gallery-dots{
+    display:flex;justify-content:center;gap:6px;
+    padding-top:12px;
+  }
+  .gallery-dots button{
+    width:7px;height:7px;padding:0;border-radius:50%;
+    background:var(--line);border:none;
+  }
+  .gallery-dots button.active{
+    background:var(--ink);width:16px;border-radius:4px;
+  }
+  .gallery-caption{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:12px 6px 2px;
+    font-size:12px;color:var(--ink-soft);
+  }
+  .gallery-caption b{color:var(--ink);font-weight:600;}
+
+  /* ---------- CASE INDEX ---------- */
+  .index-head{
+    padding:44px 24px 8px;
+    border-top:1px solid var(--line);
+  }
+  .index-head span{
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:12px;color:var(--ink-soft);
+  }
+  .index-head h2{
+    font-family:\'Fraunces\',serif;
+    font-weight:500;
+    font-size:24px;
+    margin:6px 0 0;
+  }
+
+  .case{
+    padding:34px 24px;
+    border-top:1px solid var(--line);
+    position:relative;
+  }
+  .case-tag-row{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:14px;
+  }
+  .tooth-num{
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:13px;font-weight:600;
+    color:var(--ink);
+    background:var(--sage);
+    padding:4px 9px;
+    border:1px solid var(--line);
+  }
+  .class-chip{
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:2px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .class-II{background:var(--teal-tint);color:var(--teal);}
+  .class-IV{background:var(--coral-tint);color:var(--coral);}
+  .class-V{background:var(--gold-tint);color:var(--gold);}
+
+  .case h3{
+    font-family:\'Fraunces\',serif;
+    font-weight:500;
+    font-size:20px;
+    margin:0 0 8px;
+  }
+  .case p{
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+    max-width:40ch;
+  }
+
+  .watermark{
+    position:absolute;
+    top:8px;right:16px;
+    font-family:\'IBM Plex Mono\',monospace;
+    font-size:64px;
+    font-weight:600;
+    color:var(--ink);
+    opacity:0.04;
+    line-height:1;
+    pointer-events:none;
+  }
+
+  footer{
+    padding:30px 24px 40px;
+    font-size:11px;color:var(--ink-soft);
+    font-family:\'IBM Plex Mono\',monospace;
+    display:flex;justify-content:space-between;
+    border-top:1px solid var(--line);
+    margin-top:20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-name">Dr. Rama Zeidan</div>
+  <a class="nav-back" href="index.html">Back</a>
+</div>
+
+<section class="hero">
+  <div class="hero-kicker">OPERATIVE &amp; RESTORATIVE DENTISTRY</div>
+  <h1>Every restoration is a small piece of engineering.</h1>
+  <p>A working record of clinical cases — tap through each one to see every stage, from pre-operative condition to final result.</p>
+
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="tooth-30-before.jpg.JPG" alt="Tooth 30 pre-op">
+        <span class="slide-label">PRE-OP</span>
+      </div>
+      <div class="g-slide">
+        <img src="tooth-30-after.jpg.JPG" alt="Tooth 30 final">
+        <span class="slide-label" style="color:#1F5B57">FINAL</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption">
+      <span>Tooth <b>#30</b> — Class II</span>
+      <span>Direct composite</span>
+    </div>
+  </div>
+</section>
+
+<div class="index-head">
+  <span>04 DOCUMENTED CASES</span>
+  <h2>All clinical cases</h2>
+</div>
+
+<div class="case">
+  <div class="watermark">03</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#3</span>
+    <span class="class-chip class-IV">Class IV</span>
+  </div>
+  <h3>Anterior composite bonding</h3>
+  <p>Fractured mesial incisal edge rebuilt freehand with layered composite, matched to adjacent enamel translucency.</p>
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="photos/tooth-3-before.jpg" alt="Tooth 3 pre-op">
+        <span class="slide-label">PRE-OP</span>
+      </div>
+      <div class="g-slide">
+        <img src="photos/tooth-3-after.jpg" alt="Tooth 3 final">
+        <span class="slide-label" style="color:#C1665B">FINAL</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption"><span>Chairside · single visit</span><span>Layered composite</span></div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">14</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#14</span>
+    <span class="class-chip class-II">Class II</span>
+  </div>
+  <h3>Posterior composite restoration</h3>
+  <p>MOD cavity from recurrent decay under an old amalgam. Rubber dam isolation, sectional matrix, incremental fill.</p>
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="photos/tooth-14-before.jpg" alt="Tooth 14 isolation">
+        <span class="slide-label">ISOLATION</span>
+      </div>
+      <div class="g-slide">
+        <img src="photos/tooth-14-after.jpg" alt="Tooth 14 final">
+        <span class="slide-label" style="color:#1F5B57">FINAL</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption"><span>Rubber dam · sectional matrix</span><span>Direct composite</span></div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">19</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#19</span>
+    <span class="class-chip class-IV">Class IV</span>
+  </div>
+  <h3>Molar cavity design and restoration</h3>
+  <p>Deep distal caries requiring conservative cavity design before layered restoration to preserve remaining cusp strength.</p>
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="photos/tooth-19-before.jpg" alt="Tooth 19 cavity design">
+        <span class="slide-label">CAVITY DESIGN</span>
+      </div>
+      <div class="g-slide">
+        <img src="photos/tooth-19-after.jpg" alt="Tooth 19 final">
+        <span class="slide-label" style="color:#C1665B">FINAL</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption"><span>Conservative prep</span><span>Layered composite</span></div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">22</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#22</span>
+    <span class="class-chip class-V">Class V</span>
+  </div>
+  <h3>Cervical composite restoration</h3>
+  <p>Recession-associated cervical lesion restored with a flowable base and a shade-matched composite finish along the gumline.</p>
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="photos/tooth-22-before.jpg" alt="Tooth 22 pre-op">
+        <span class="slide-label">PRE-OP</span>
+      </div>
+      <div class="g-slide">
+        <img src="photos/tooth-22-after.jpg" alt="Tooth 22 final">
+        <span class="slide-label" style="color:#A9823C">FINAL</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption"><span>Gingival margin</span><span>Flowable + composite</span></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADD A NEW CASE — COPY EVERYTHING FROM THIS LINE...
+     ============================================================
+
+<div class="case">
+  <div class="watermark">NN</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#NN</span>
+    <span class="class-chip class-IV">Class IV</span>
+  </div>
+  <h3>Case title goes here</h3>
+  <p>One or two sentences describing what was done.</p>
+  <div class="gallery-wrap">
+    <div class="gallery" data-gallery>
+      <div class="g-slide active">
+        <img src="photos/tooth-NN-photo1.jpg" alt="Stage 1">
+        <span class="slide-label">STAGE 1</span>
+      </div>
+      <div class="g-slide">
+        <img src="photos/tooth-NN-photo2.jpg" alt="Stage 2">
+        <span class="slide-label">STAGE 2</span>
+      </div>
+      Add as many more &lt;div class="g-slide"&gt; blocks as you have
+      photos for this case — 2, 3, 4, however many. Just copy
+      one of the blocks above and change the image and label.
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+    <div class="gallery-caption"><span>Left caption</span><span>Right caption</span></div>
+  </div>
+</div>
+
+     ...TO THIS LINE. Paste it right above <footer>, then change:
+       1. "NN" in the watermark      → the tooth number, e.g. 8
+       2. "#NN" in the tooth-num tag → e.g. #8
+       3. "class-IV"                 → class-II, class-IV, or class-V
+                                        (also update the visible text next to it)
+       4. "Case title goes here"     → your case name
+       5. The description sentence
+       6. Each photo\'s src path      → e.g. photos/tooth-8-before.jpg
+       7. Each slide-label           → e.g. PRE-OP, PROGRESS, FINAL
+       8. The two caption spans at the bottom
+       9. Add or remove <div class="g-slide"> blocks to match how
+          many photos this case actually has (2, 3, or 4 — any number
+          works, the dots below the photo adjust automatically)
+
+     Then upload your photos into the "photos" folder in this same
+     GitHub repo, named EXACTLY what you put in step 6.
+     ============================================================ -->
+
+<footer>
+  <span>OPERATIVE &amp; RESTORATIVE — 2026</span>
+  <span>04 / 04</span>
+</footer>
+
+<script>
+document.querySelectorAll(\'[data-gallery]\').forEach(function(gal){
+  var slides = Array.prototype.slice.call(gal.querySelectorAll(\'.g-slide\'));
+  var dotsWrap = gal.parentElement.querySelector(\'.gallery-dots\');
+  var current = 0;
+
+  slides.forEach(function(s, i){
+    var dot = document.createElement(\'button\');
+    if(i === 0) dot.className = \'active\';
+    dot.addEventListener(\'click\', function(){ goTo(i); });
+    dotsWrap.appendChild(dot);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function goTo(i){
+    slides[current].classList.remove(\'active\');
+    dots[current].classList.remove(\'active\');
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add(\'active\');
+    dots[current].classList.add(\'active\');
+  }
+
+  gal.querySelector(\'.g-prev\').addEventListener(\'click\', function(){ goTo(current - 1); });
+  gal.querySelector(\'.g-next\').addEventListener(\'click\', function(){ goTo(current + 1); });
+});
+</script>
+
+</body>
+</html>
