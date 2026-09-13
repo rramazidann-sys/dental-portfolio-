@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Rama Zeidan — Clinical Cases</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Parisienne&display=swap');
+
+  :root{
+    --porcelain:#F6F3ED;
+    --ink:#211F1B;
+    --ink-soft:#6B665D;
+    --sage:#E7EBE1;
+    --line:#DAD5C9;
+    --paper:#FBFAF6;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--porcelain);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  .nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 24px;
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:rgba(246,243,237,0.92);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .nav-name{font-family:'Parisienne',cursive;font-size:26px;color:var(--ink);line-height:1;}
+
+  .hero{padding:44px 24px 20px;position:relative;}
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:500;font-size:36px;
+    margin:0 0 4px;position:relative;display:inline-block;
+  }
+  .hero h1 svg{
+    position:absolute;left:-4px;right:-4px;bottom:-10px;width:calc(100% + 8px);
+    height:16px;
+  }
+  .hero p{
+    font-size:15px;line-height:1.6;color:var(--ink-soft);max-width:38ch;
+    margin:22px 0 0;
+  }
+
+  .grid{
+    padding:36px 24px 40px;
+    display:flex;flex-wrap:wrap;
+    gap:12px;
+  }
+  .dept-card{
+    display:flex;flex-direction:column;
+    width:calc(50% - 6px);
+    border:1px solid var(--line);
+    background:var(--paper);
+    text-decoration:none;
+    color:var(--ink);
+    overflow:hidden;
+  }
+  .dept-icon-box{
+    background:var(--sage);
+    display:flex;align-items:center;justify-content:center;
+    aspect-ratio:1;
+    overflow:hidden;
+  }
+  .dept-icon-box img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .dept-text{padding:12px 12px 14px;}
+  .dept-text h3{
+    font-family:'Fraunces',serif;font-weight:500;font-size:15px;margin:0 0 4px;
+    line-height:1.25;
+  }
+  .dept-text p{
+    font-size:10px;color:var(--ink-soft);margin:0;
+    font-family:'IBM Plex Mono',monospace;letter-spacing:0.01em;
+    line-height:1.3;
+  }
+
+  footer{
+    padding:30px 24px 40px;
+    font-size:11px;color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+    display:flex;justify-content:space-between;
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-name">Dr. Rama Zeidan</div>
+</div>
+
+<section class="hero">
+  <h1>Clinical Cases
+    <svg viewBox="0 0 300 16" preserveAspectRatio="none">
+      <path d="M2 7 Q80 1 150 6 T298 5" fill="none" stroke="#211F1B" stroke-width="3" stroke-linecap="round"/>
+      <path d="M4 11 Q90 6 160 10 T296 9" fill="none" stroke="#211F1B" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </h1>
+  <p>A selection of clinical cases showcasing my experience across different areas of dentistry.</p>
+</section>
+
+<div class="grid">
+
+  <a class="dept-card" href="operative-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-operative.jpg" alt="Operative and restorative"></div>
+    <div class="dept-text">
+      <h3>Operative &amp; Restorative</h3>
+      <p>RESTORATIVE CLINICAL CASES</p>
+    </div>
+  </a>
+
+  <a class="dept-card" href="endodontics-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-endodontics.jpg" alt="Endodontics"></div>
+    <div class="dept-text">
+      <h3>Endodontics</h3>
+      <p>SELECTED ENDODONTIC CASES</p>
+    </div>
+  </a>
+
+  <a class="dept-card" href="prosthesis-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-prosthesis.jpg" alt="Prosthesis"></div>
+    <div class="dept-text">
+      <h3>Prosthesis</h3>
+      <p>FIXED &amp; REMOVABLE CASES</p>
+    </div>
+  </a>
+
+  <a class="dept-card" href="pediatric-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-pediatric.jpg" alt="Pediatric dentistry"></div>
+    <div class="dept-text">
+      <h3>Pediatric Dentistry</h3>
+      <p>SELECTED PEDIATRIC CASES</p>
+    </div>
+  </a>
+
+  <a class="dept-card" href="oral-surgery-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-oral-surgery.jpg" alt="Oral surgery"></div>
+    <div class="dept-text">
+      <h3>Oral Surgery</h3>
+      <p>EXTRACTION CLINICAL CASES</p>
+    </div>
+  </a>
+
+  <a class="dept-card" href="ccc-cases-portfolio.html">
+    <div class="dept-icon-box"><img src="icon-ccc.jpg" alt="Comprehensive clinical care"></div>
+    <div class="dept-text">
+      <h3>Comprehensive Care</h3>
+      <p>CCC CLINICAL CASES</p>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  <span>CLINICAL CASES — 2026</span>
+  <span>06 DEPARTMENTS</span>
+</footer>
+
+</body>
+</html>
