@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operative & Restorative Dentistry — Case Index</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Parisienne&display=swap');
+
+  :root{
+    --porcelain:#F6F3ED;
+    --ink:#211F1B;
+    --ink-soft:#6B665D;
+    --teal:#1F5B57;
+    --teal-tint:#E4ECEA;
+    --coral:#C1665B;
+    --coral-tint:#F3E4E1;
+    --gold:#A9823C;
+    --gold-tint:#EFE7D4;
+    --plum:#7A5C74;
+    --plum-tint:#EDE3EA;
+    --sage:#E7EBE1;
+    --line:#DAD5C9;
+    --paper:#FBFAF6;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--porcelain);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 24px;
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:rgba(246,243,237,0.92);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .nav-name{
+    font-family:'Parisienne',cursive;
+    font-size:26px;
+    color:var(--ink);
+    line-height:1;
+  }
+  .nav-back{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;font-weight:600;
+    color:var(--ink);
+    text-decoration:none;
+    border:1px solid var(--ink);
+    padding:7px 14px;
+    display:inline-block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:40px 24px 40px;
+    position:relative;
+  }
+  .hero-kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;color:var(--teal);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:34px;
+    line-height:1.18;
+    margin:0 0 16px;
+    max-width:15ch;
+  }
+  .hero p{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    max-width:34ch;
+    margin:0 0 30px;
+  }
+
+  /* ---------- shared media box (used by both gallery & compare) ---------- */
+  .media-wrap{
+    border:1px solid var(--line);
+    background:var(--paper);
+    padding:10px 10px 14px;
+  }
+  .media-box{
+    position:relative;
+    width:100%;
+    height:0;
+    padding-top:60%; /* placeholder until JS measures the real photo ratio */
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:
+      repeating-linear-gradient(135deg, rgba(0,0,0,0.03) 0 2px, transparent 2px 6px),
+      linear-gradient(160deg,#E7EBE1,#DAD5C9);
+  }
+  .media-box img{
+    width:100%;height:100%;
+    object-fit:contain; /* never crop or zoom — show the photo as uploaded */
+    display:block;
+    position:absolute;inset:0;
+    background:transparent;
+  }
+
+  /* ---------- TAP-THROUGH GALLERY (3+ photos) ---------- */
+  .g-slide{
+    position:absolute;inset:0;
+    opacity:0;
+    transition:opacity .25s ease;
+    pointer-events:none;
+  }
+  .g-slide.active{opacity:1;pointer-events:auto;}
+  .slide-label{
+    position:absolute;bottom:10px;left:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;color:var(--ink-soft);
+    letter-spacing:0.02em;
+    background:rgba(251,250,246,0.9);
+    padding:3px 9px;
+    z-index:2;
+  }
+  .g-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:32px;height:32px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;line-height:1;padding:0;
+    cursor:pointer;z-index:3;
+  }
+  .g-prev{left:8px;}
+  .g-next{right:8px;}
+  .gallery-dots{
+    display:flex;justify-content:center;gap:6px;
+    padding-top:12px;
+  }
+  .gallery-dots button{
+    width:7px;height:7px;padding:0;border-radius:50%;
+    background:var(--line);border:none;
+  }
+  .gallery-dots button.active{
+    background:var(--ink);width:16px;border-radius:4px;
+  }
+
+  /* ---------- SWIPE COMPARE (exactly 2 photos) ---------- */
+  .compare-box{cursor:ew-resize;touch-action:none;user-select:none;}
+  .c-panel{position:absolute;inset:0;}
+  .c-panel.after{clip-path: inset(0 0 0 50%);}
+  .c-handle{
+    position:absolute;top:0;bottom:0;left:50%;
+    width:2px;background:var(--ink);
+    transform:translateX(-1px);
+    pointer-events:none;
+  }
+  .c-handle::after{
+    content:"";
+    position:absolute;top:50%;left:50%;
+    width:34px;height:34px;
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .c-handle::before{
+    content:"\25C2 \25B8";
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:9px;letter-spacing:2px;
+    color:var(--ink);
+    z-index:2;
+  }
+
+  /* ---------- CASE INDEX ---------- */
+  .index-head{
+    padding:44px 24px 8px;
+    border-top:1px solid var(--line);
+  }
+  .index-head span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;color:var(--ink-soft);
+  }
+  .index-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:24px;
+    margin:6px 0 0;
+  }
+
+  .case{
+    padding:34px 24px;
+    border-top:1px solid var(--line);
+    position:relative;
+  }
+  .case-tag-row{
+    display:flex;align-items:center;gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .tooth-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;font-weight:600;
+    color:var(--ink);
+    background:var(--sage);
+    padding:4px 9px;
+    border:1px solid var(--line);
+  }
+  .class-chip{
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:2px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .class-I{background:var(--plum-tint);color:var(--plum);}
+  .class-II{background:var(--teal-tint);color:var(--teal);}
+  .class-IV{background:var(--coral-tint);color:var(--coral);}
+  .class-V{background:var(--gold-tint);color:var(--gold);}
+
+  .case h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:20px;
+    margin:0 0 8px;
+  }
+  .case p{
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+    max-width:40ch;
+  }
+
+  .watermark{
+    position:absolute;
+    top:8px;right:16px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:64px;
+    font-weight:600;
+    color:var(--ink);
+    opacity:0.04;
+    line-height:1;
+    pointer-events:none;
+  }
+
+  footer{
+    padding:30px 24px 40px;
+    font-size:11px;color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+    display:flex;justify-content:space-between;
+    border-top:1px solid var(--line);
+    margin-top:20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-name">Dr. Rama Zeidan</div>
+  <a class="nav-back" href="clinical-cases.html">Back</a>
+</div>
+
+<section class="hero">
+  <div class="hero-kicker">OPERATIVE &amp; RESTORATIVE DENTISTRY</div>
+  <h1>Every restoration is a small piece of engineering.</h1>
+  <p>A working record of clinical cases — tap through each one to see every stage, from pre-op condition to final result.</p>
+</section>
+
+<div class="index-head">
+  <span>05 DOCUMENTED CASES</span>
+  <h2>All clinical cases</h2>
+</div>
+
+<!-- Newest case first. When you add a new one, paste it right here,
+     above this comment, so it stays at the top. -->
+
+<div class="case">
+  <div class="watermark">36</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#36</span>
+    <span class="class-chip class-II">Class II</span>
+    <span class="tooth-num">#37</span>
+    <span class="class-chip class-I">Class I</span>
+  </div>
+  <h3>Class II and Class I restorations — teeth #36 &amp; #37</h3>
+  <p>A Class II restoration on tooth #36 and a simple Class I restoration on tooth #37, completed in the same visit.</p>
+  <div class="media-wrap">
+    <div class="media-box" data-gallery>
+      <div class="g-slide active">
+        <img data-base="tooth-1-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-1-during" alt="Cavity design">
+        <span class="slide-label">Cavity Design</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-1-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">24</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#24</span>
+    <span class="class-chip class-II">Class II</span>
+  </div>
+  <h3>Class II restoration — tooth #24</h3>
+  <p>Class II composite restoration on tooth #24.</p>
+  <div class="media-wrap">
+    <div class="media-box" data-gallery>
+      <div class="g-slide active">
+        <img data-base="tooth-5-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-5-during" alt="Cavity design">
+        <span class="slide-label">Cavity Design</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-5-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">13</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#13</span>
+    <span class="class-chip class-V">Class V</span>
+  </div>
+  <h3>Class V restoration — tooth #13</h3>
+  <p>Class V composite restoration on tooth #13.</p>
+  <div class="media-wrap">
+    <div class="media-box compare-box" data-compare>
+      <div class="c-panel before">
+        <img data-base="tooth-2-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="c-panel after">
+        <img data-base="tooth-2-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <div class="c-handle"></div>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">46</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#46</span>
+    <span class="tooth-num">#47</span>
+    <span class="class-chip class-I">Class I</span>
+  </div>
+  <h3>Class I restorations — teeth #46 &amp; #47</h3>
+  <p>A compound Class I restoration on tooth #46 and a simple Class I restoration on tooth #47.</p>
+  <div class="media-wrap">
+    <div class="media-box compare-box" data-compare>
+      <div class="c-panel before">
+        <img data-base="tooth-3-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="c-panel after">
+        <img data-base="tooth-3-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <div class="c-handle"></div>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="watermark">11</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#11</span>
+    <span class="class-chip class-V">Class V</span>
+  </div>
+  <h3>Class V anterior composite — tooth #11</h3>
+  <p>Class V anterior composite restoration on tooth #11.</p>
+  <div class="media-wrap">
+    <div class="media-box" data-gallery>
+      <div class="g-slide active">
+        <img data-base="tooth-4-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-4-during" alt="Cavity design">
+        <span class="slide-label">Cavity Design</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-4-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADD A NEW CASE — COPY EVERYTHING FROM THIS LINE...
+     ============================================================
+
+     IF YOU HAVE 3 OR 4 PHOTOS, use this tap-through version:
+
+<div class="case">
+  <div class="watermark">NN</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#NN</span>
+    <span class="class-chip class-IV">Class IV</span>
+  </div>
+  <h3>Case title goes here</h3>
+  <p>One sentence describing the restoration.</p>
+  <div class="media-wrap">
+    <div class="media-box" data-gallery>
+      <div class="g-slide active">
+        <img data-base="tooth-NN-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-NN-during" alt="Cavity design">
+        <span class="slide-label">Cavity Design</span>
+      </div>
+      <div class="g-slide">
+        <img data-base="tooth-NN-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <button class="g-arrow g-prev" aria-label="Previous photo">&#8249;</button>
+      <button class="g-arrow g-next" aria-label="Next photo">&#8250;</button>
+    </div>
+    <div class="gallery-dots"></div>
+  </div>
+</div>
+
+     IF YOU HAVE EXACTLY 2 PHOTOS, use this swipe version instead:
+
+<div class="case">
+  <div class="watermark">NN</div>
+  <div class="case-tag-row">
+    <span class="tooth-num">#NN</span>
+    <span class="class-chip class-IV">Class IV</span>
+  </div>
+  <h3>Case title goes here</h3>
+  <p>One sentence describing the restoration.</p>
+  <div class="media-wrap">
+    <div class="media-box compare-box" data-compare>
+      <div class="c-panel before">
+        <img data-base="tooth-NN-before" alt="Pre-op">
+        <span class="slide-label">Pre-Op</span>
+      </div>
+      <div class="c-panel after">
+        <img data-base="tooth-NN-after" alt="Post-op">
+        <span class="slide-label">Post-Op</span>
+      </div>
+      <div class="c-handle"></div>
+    </div>
+  </div>
+</div>
+
+     ...TO THIS LINE. Paste it ABOVE the newest case currently at
+     the top of the list, so your new case becomes the new top of
+     the page. Then change "NN", the tooth number, the class,
+     the title, the description, and each data-base value.
+
+     You do NOT need to worry about the photo's exact file
+     extension (.jpg vs .JPG vs .jpeg) — the page automatically
+     tries the common variations on its own.
+     ============================================================ -->
+
+<footer>
+  <span>OPERATIVE &amp; RESTORATIVE — 2026</span>
+  <span>05 / 05</span>
+</footer>
+
+<script>
+var EXT_CANDIDATES = ['.jpg','.JPG','.jpeg','.JPEG','.jpg.jpg','.jpg.JPG','.jpg.jpeg','.jpg.JPEG','.JPG.jpg','.JPG.JPG','.JPG.jpeg','.JPG.JPEG','_jpg.jpg','_jpg.JPG','.png','.PNG'];
+
+function loadWithFallback(img, onLoad){
+  var base = img.getAttribute('data-base');
+  var i = 0;
+  function tryNext(){
+    if(i >= EXT_CANDIDATES.length){ img.style.display='none'; return; }
+    img.onerror = tryNext;
+    img.onload = function(){ if(onLoad) onLoad(img); };
+    img.src = base + EXT_CANDIDATES[i++];
+  }
+  tryNext();
+}
+
+function setBoxRatio(box, img){
+  if(!img.naturalWidth) return;
+  var ratio = img.naturalHeight / img.naturalWidth;
+  box.style.paddingTop = (ratio * 100) + '%';
+}
+
+document.querySelectorAll('[data-gallery]').forEach(function(box){
+  var slides = Array.prototype.slice.call(box.querySelectorAll('.g-slide'));
+  var dotsWrap = box.parentElement.querySelector('.gallery-dots');
+  var current = 0;
+
+  slides.forEach(function(s, i){
+    var img = s.querySelector('img');
+    loadWithFallback(img, i === 0 ? function(im){ setBoxRatio(box, im); } : null);
+    var dot = document.createElement('button');
+    if(i === 0) dot.className = 'active';
+    dot.addEventListener('click', function(){ goTo(i); });
+    dotsWrap.appendChild(dot);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function goTo(i){
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  box.querySelector('.g-prev').addEventListener('click', function(){ goTo(current - 1); });
+  box.querySelector('.g-next').addEventListener('click', function(){ goTo(current + 1); });
+});
+
+document.querySelectorAll('[data-compare]').forEach(function(box){
+  var beforeImg = box.querySelector('.c-panel.before img');
+  var afterImg = box.querySelector('.c-panel.after img');
+  var handle = box.querySelector('.c-handle');
+  var afterPanel = box.querySelector('.c-panel.after');
+  var dragging = false;
+
+  loadWithFallback(beforeImg, function(im){ setBoxRatio(box, im); });
+  loadWithFallback(afterImg);
+
+  function setPos(clientX){
+    var rect = box.getBoundingClientRect();
+    var pct = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+    afterPanel.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+    handle.style.left = pct + '%';
+  }
+
+  box.addEventListener('pointerdown', function(e){
+    dragging = true;
+    box.setPointerCapture(e.pointerId);
+    setPos(e.clientX);
+  });
+  box.addEventListener('pointermove', function(e){
+    if(dragging) setPos(e.clientX);
+  });
+  box.addEventListener('pointerup', function(){ dragging = false; });
+  box.addEventListener('pointerleave', function(){ dragging = false; });
+});
+</script>
+
+</body>
+</html>
